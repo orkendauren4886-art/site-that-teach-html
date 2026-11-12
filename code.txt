@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTMLForge - Bright & Interactive HTML Learning Studio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#2563EB',
+                            lightBlue: '#3B82F6',
+                            purple: '#7C3AED',
+                            coral: '#FF5757',
+                            emerald: '#10B981',
+                            bg: '#F8FAFC',
+                            cardBg: '#FFFFFF',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    boxShadow: {
+                        'glow-blue': '0 10px 25px -5px rgba(37, 99, 235, 0.25)',
+                        'glow-purple': '0 10px 25px -5px rgba(124, 58, 237, 0.25)',
+                        'card-hover': '0 20px 30px -10px rgba(15, 23, 42, 0.08)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Floating Canvas particles background */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Glassmorphism for Light Theme */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .glass-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-6px);
+            border-color: #93C5FD;
+            box-shadow: 0 20px 30px -10px rgba(37, 99, 235, 0.12);
+        }
+
+        /* Smooth Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2563EB;
+        }
+
+        /* Scroll Reveal Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .code-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Floating effect */
+        @keyframes subtleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+            animation: subtleFloat 5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans selection:bg-brand-blue selection:text-white relative overflow-x-hidden">
+
+    <!-- Ambient Interactive Particle Background -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Navigation Header -->
+    <nav class="fixed top-0 left-0 w-full z-40 glass-nav px-4 lg:px-8 py-3.5 shadow-sm">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-purple flex items-center justify-center text-white text-lg font-black shadow-glow-blue group-hover:scale-105 transition-transform">
+                    &lt;/&gt;
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-xl tracking-tight text-slate-900 flex items-center gap-1.5">
+                        HTML<span class="text-brand-blue">Forge</span>
+                    </span>
+                    <span class="text-[10px] text-slate-500 font-mono tracking-wider uppercase font-semibold">Interactive Learning Studio</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <div class="hidden md:flex items-center gap-1 bg-slate-100/80 p-1.5 rounded-full border border-slate-200">
+                <a href="#hero" class="px-4 py-1.5 rounded-full text-sm font-semibold text-slate-600 hover:text-brand-blue hover:bg-white transition-all">Home</a>
+                <a href="#concepts" class="px-4 py-1.5 rounded-full text-sm font-semibold text-slate-600 hover:text-brand-blue hover:bg-white transition-all">Core Tags</a>
+                <a href="#playground" class="px-4 py-1.5 rounded-full text-sm font-semibold text-slate-600 hover:text-brand-blue hover:bg-white transition-all">Live Studio</a>
+                <a href="#cheatsheet" class="px-4 py-1.5 rounded-full text-sm font-semibold text-slate-600 hover:text-brand-blue hover:bg-white transition-all">Anatomy</a>
+            </div>
+
+            <!-- Action Buttons (Includes Presentation Mode Trigger) -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button onclick="PresentationModule.openModal()" class="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all shadow-sm">
+                    <i class="fa-solid fa-award text-amber-500"></i>
+                    <span>Project Pitch Specs</span>
+                </button>
+
+                <a href="#playground" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-blue hover:bg-blue-700 text-white text-sm font-bold shadow-glow-blue hover:scale-[1.02] active:scale-[0.98] transition-all">
+                    <i class="fa-solid fa-code text-xs"></i> Open Studio
+                </a>
+
+                <button id="mobile-menu-btn" class="md:hidden text-slate-600 hover:text-slate-900 p-2 text-xl focus:outline-none">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden mt-3 pt-3 border-t border-slate-200 flex flex-col gap-2">
+            <a href="#hero" class="px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100 font-medium">Home</a>
+            <a href="#concepts" class="px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100 font-medium">Core Tags</a>
+            <a href="#playground" class="px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100 font-medium">Live Studio</a>
+            <a href="#cheatsheet" class="px-4 py-2 rounded-lg text-slate-700 hover:bg-slate-100 font-medium">Anatomy</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative pt-32 pb-16 md:pt-40 md:pb-24 px-4 overflow-hidden">
+        <div class="max-w-6xl mx-auto text-center relative z-10">
+            <!-- Project Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-brand-blue text-xs font-bold mb-6 shadow-sm">
+                <span class="w-2.5 h-2.5 rounded-full bg-brand-blue animate-pulse"></span>
+                Web Development Educational Platform
+            </div>
+
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-slate-900 tracking-tight leading-tight mb-6">
+                Learn HTML Through <br class="hidden sm:block"/>
+                <span class="bg-gradient-to-r from-brand-blue via-brand-purple to-brand-coral bg-clip-text text-transparent">
+                    Interactive Visual Feedback
+                </span>
+            </h1>
+
+            <p class="max-w-2xl mx-auto text-base sm:text-lg text-slate-600 font-normal leading-relaxed mb-8">
+                An intuitive educational platform built to teach semantic HTML structure with instant code execution, tag visualizers, and pre-built modular exercises.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#playground" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-brand-blue text-white font-bold text-base shadow-glow-blue hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play text-xs"></i> Launch Live Sandbox
+                </a>
+                <button onclick="PresentationModule.openModal()" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white border border-slate-300 hover:border-slate-400 text-slate-700 font-bold text-base shadow-sm hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-circle-info text-brand-purple"></i> Project Architecture Specs
+                </button>
+            </div>
+
+            <!-- Hero Feature Cards -->
+            <div class="mt-14 grid grid-cols-1 md:grid-cols-3 gap-5 text-left max-w-5xl mx-auto">
+                <div class="glass-card p-5 rounded-2xl animate-float shadow-sm" style="animation-delay: 0s;">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 text-brand-blue flex items-center justify-center font-bold mb-3">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <h3 class="text-slate-900 font-bold text-base">Real-Time Studio</h3>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Instant visual iframe execution lets learners see HTML layout changes immediately as they type.</p>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl animate-float shadow-sm" style="animation-delay: 0.2s;">
+                    <div class="w-10 h-10 rounded-xl bg-purple-50 border border-purple-100 text-brand-purple flex items-center justify-center font-bold mb-3">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                    <h3 class="text-slate-900 font-bold text-base">Modular Code Insertion</h3>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Click any core concept card to inject functional starter code directly into the live code playground.</p>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl animate-float shadow-sm" style="animation-delay: 0.4s;">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 text-brand-emerald flex items-center justify-center font-bold mb-3">
+                        <i class="fa-solid fa-diagram-project"></i>
+                    </div>
+                    <h3 class="text-slate-900 font-bold text-base">Clean Project Specs</h3>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Architected cleanly into modular JS components—ideal for presenting and demonstrating at competitions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core HTML Concepts Grid Section -->
+    <section id="concepts" class="py-16 px-4 max-w-7xl mx-auto relative z-10">
+        <div class="text-center mb-12 reveal">
+            <span class="text-xs font-bold font-mono tracking-widest text-brand-blue uppercase mb-2 block">Interactive Learning Modules</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Core HTML Elements</h2>
+            <p class="text-slate-500 mt-2 text-sm sm:text-base max-w-xl mx-auto">Click any module below to automatically load its code template into the editor.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- Module 1: Headings -->
+            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between reveal group cursor-pointer" onclick="EditorModule.loadTemplate('headings')">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="w-10 h-10 rounded-xl bg-blue-50 text-brand-blue flex items-center justify-center font-mono font-bold text-sm">
+                            &lt;h1&gt;
+                        </span>
+                        <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold">Hierarchy</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-brand-blue transition-colors">Headings &amp; Structure</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                        Defines document structure from primary titles (<code class="text-brand-blue font-mono">&lt;h1&gt;</code>) to minor sub-sections (<code class="text-brand-blue font-mono">&lt;h6&gt;</code>).
+                    </p>
+                </div>
+                <div>
+                    <div class="bg-slate-900 p-3 rounded-xl font-mono text-[11px] text-slate-300 mb-4 overflow-x-auto">
+                        <span class="text-blue-400">&lt;h1&gt;</span>Main Heading<span class="text-blue-400">&lt;/h1&gt;</span><br>
+                        <span class="text-blue-400">&lt;h2&gt;</span>Sub Heading<span class="text-blue-400">&lt;/h2&gt;</span>
+                    </div>
+                    <button class="w-full py-2 rounded-xl bg-slate-100 group-hover:bg-brand-blue text-slate-700 group-hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-code"></i> Load Snippet
+                    </button>
+                </div>
+            </div>
+
+            <!-- Module 2: Paragraphs -->
+            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between reveal group cursor-pointer" onclick="EditorModule.loadTemplate('paragraph')">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="w-10 h-10 rounded-xl bg-purple-50 text-brand-purple flex items-center justify-center font-mono font-bold text-sm">
+                            &lt;p&gt;
+                        </span>
+                        <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold">Text</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-brand-purple transition-colors">Paragraphs &amp; Text</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                        Organizes textual content into formatted blocks with inline tags like <code class="text-brand-purple font-mono">&lt;strong&gt;</code> and <code class="text-brand-purple font-mono">&lt;em&gt;</code>.
+                    </p>
+                </div>
+                <div>
+                    <div class="bg-slate-900 p-3 rounded-xl font-mono text-[11px] text-slate-300 mb-4 overflow-x-auto">
+                        <span class="text-purple-400">&lt;p&gt;</span>Learn HTML with <span class="text-amber-300">&lt;strong&gt;</span>ease<span class="text-amber-300">&lt;/strong&gt;</span>.<span class="text-purple-400">&lt;/p&gt;</span>
+                    </div>
+                    <button class="w-full py-2 rounded-xl bg-slate-100 group-hover:bg-brand-purple text-slate-700 group-hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-code"></i> Load Snippet
+                    </button>
+                </div>
+            </div>
+
+            <!-- Module 3: Buttons -->
+            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between reveal group cursor-pointer" onclick="EditorModule.loadTemplate('buttons')">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="w-10 h-10 rounded-xl bg-emerald-50 text-brand-emerald flex items-center justify-center font-bold text-sm">
+                            <i class="fa-solid fa-hand-pointer"></i>
+                        </span>
+                        <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold">Action</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-brand-emerald transition-colors">Interactive Buttons</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                        Allows user interaction on web pages. Easily styled and linked to JavaScript click events.
+                    </p>
+                </div>
+                <div>
+                    <div class="bg-slate-900 p-3 rounded-xl font-mono text-[11px] text-slate-300 mb-4 overflow-x-auto">
+                        <span class="text-emerald-400">&lt;button</span> onclick="..."<span class="text-emerald-400">&gt;</span>Click Me<span class="text-emerald-400">&lt;/button&gt;</span>
+                    </div>
+                    <button class="w-full py-2 rounded-xl bg-slate-100 group-hover:bg-brand-emerald text-slate-700 group-hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-code"></i> Load Snippet
+                    </button>
+                </div>
+            </div>
+
+            <!-- Module 4: Links -->
+            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between reveal group cursor-pointer" onclick="EditorModule.loadTemplate('links')">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="w-10 h-10 rounded-xl bg-rose-50 text-brand-coral flex items-center justify-center font-bold text-sm">
+                            <i class="fa-solid fa-link"></i>
+                        </span>
+                        <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold">Navigation</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-brand-coral transition-colors">Hyperlinks (&lt;a&gt;)</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                        Connects different pages or external web resources using the essential <code class="text-brand-coral font-mono">href</code> attribute.
+                    </p>
+                </div>
+                <div>
+                    <div class="bg-slate-900 p-3 rounded-xl font-mono text-[11px] text-slate-300 mb-4 overflow-x-auto">
+                        <span class="text-rose-400">&lt;a</span> href="https://..."<span class="text-rose-400">&gt;</span>Visit Link<span class="text-rose-400">&lt;/a&gt;</span>
+                    </div>
+                    <button class="w-full py-2 rounded-xl bg-slate-100 group-hover:bg-brand-coral text-slate-700 group-hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-code"></i> Load Snippet
+                    </button>
+                </div>
+            </div>
+
+            <!-- Module 5: Forms -->
+            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between reveal group cursor-pointer" onclick="EditorModule.loadTemplate('forms')">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-sm">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </span>
+                        <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold">Inputs</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-amber-600 transition-colors">Forms &amp; Inputs</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                        Collects data from users using inputs, text areas, dropdown selects, and form submit controls.
+                    </p>
+                </div>
+                <div>
+                    <div class="bg-slate-900 p-3 rounded-xl font-mono text-[11px] text-slate-300 mb-4 overflow-x-auto">
+                        <span class="text-amber-400">&lt;input</span> type="text" placeholder="..."<span class="text-amber-400">&gt;</span>
+                    </div>
+                    <button class="w-full py-2 rounded-xl bg-slate-100 group-hover:bg-amber-500 text-slate-700 group-hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-code"></i> Load Snippet
+                    </button>
+                </div>
+            </div>
+
+            <!-- Module 6: Project Card -->
+            <div class="glass-card rounded-2xl p-6 flex flex-col justify-between reveal group cursor-pointer" onclick="EditorModule.loadTemplate('card')">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">
+                            <i class="fa-solid fa-address-card"></i>
+                        </span>
+                        <span class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold">Full Component</span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">Profile Card Project</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-4">
+                        Combines headings, paragraph text, inline CSS styles, and buttons into a complete UI widget.
+                    </p>
+                </div>
+                <div>
+                    <div class="bg-slate-900 p-3 rounded-xl font-mono text-[11px] text-slate-300 mb-4 overflow-x-auto">
+                        <span class="text-indigo-400">&lt;div</span> style="border-radius: 12px;"<span class="text-indigo-400">&gt;</span>...<span class="text-indigo-400">&lt;/div&gt;</span>
+                    </div>
+                    <button class="w-full py-2 rounded-xl bg-slate-100 group-hover:bg-indigo-600 text-slate-700 group-hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-code"></i> Load Complete Card
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Interactive Live Code Editor Studio -->
+    <section id="playground" class="py-16 px-4 max-w-7xl mx-auto relative z-10">
+        <div class="text-center mb-8 reveal">
+            <span class="text-xs font-bold font-mono tracking-widest text-brand-blue uppercase mb-2 block">Live Sandbox Studio</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Interactive Editor</h2>
+            <p class="text-slate-500 mt-2 text-sm sm:text-base">Modify HTML code on the left and see immediate visual execution in the preview frame on the right.</p>
+        </div>
+
+        <!-- Studio Window Wrapper -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden reveal">
+            <!-- Studio Toolbar Controls -->
+            <div class="bg-slate-100 border-b border-slate-200 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-rose-400 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-emerald-400 inline-block"></span>
+                    <span class="ml-2 text-xs font-mono text-slate-600 font-semibold flex items-center gap-2">
+                        <i class="fa-solid fa-code text-brand-blue"></i> index.html
+                    </span>
+                </div>
+
+                <!-- Template Selector Quick Buttons -->
+                <div class="flex items-center gap-1.5 overflow-x-auto py-1">
+                    <button onclick="EditorModule.loadTemplate('headings')" class="px-2.5 py-1 text-xs rounded-lg bg-white border border-slate-200 hover:border-slate-300 text-slate-700 font-semibold transition-colors">Headings</button>
+                    <button onclick="EditorModule.loadTemplate('paragraph')" class="px-2.5 py-1 text-xs rounded-lg bg-white border border-slate-200 hover:border-slate-300 text-slate-700 font-semibold transition-colors">Paragraph</button>
+                    <button onclick="EditorModule.loadTemplate('buttons')" class="px-2.5 py-1 text-xs rounded-lg bg-white border border-slate-200 hover:border-slate-300 text-slate-700 font-semibold transition-colors">Button</button>
+                    <button onclick="EditorModule.loadTemplate('forms')" class="px-2.5 py-1 text-xs rounded-lg bg-white border border-slate-200 hover:border-slate-300 text-slate-700 font-semibold transition-colors">Form</button>
+                    <button onclick="EditorModule.loadTemplate('card')" class="px-3 py-1 text-xs rounded-lg bg-brand-blue text-white font-bold hover:bg-blue-700 transition-colors shadow-sm">Full Profile Card</button>
+                </div>
+
+                <!-- Editor Actions -->
+                <div class="flex items-center gap-2">
+                    <button onclick="EditorModule.clear()" class="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-rotate-left"></i> Clear
+                    </button>
+                    <button onclick="EditorModule.copy()" class="px-3 py-1.5 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-regular fa-copy"></i> Copy HTML
+                    </button>
+                </div>
+            </div>
+
+            <!-- Workspace Editor & Live Output Split View -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-200 min-h-[460px]">
+                
+                <!-- Code Editor Column -->
+                <div class="p-4 bg-slate-900 flex flex-col">
+                    <div class="flex items-center justify-between text-xs text-slate-400 font-mono mb-2">
+                        <span>HTML CODE INPUT</span>
+                        <span id="char-count">0 characters</span>
+                    </div>
+                    <textarea id="html-input" class="w-full h-80 lg:h-full bg-slate-950 text-emerald-400 font-mono text-sm p-4 rounded-xl border border-slate-800 code-input resize-none focus:outline-none leading-relaxed" placeholder="Type your HTML markup here..." spellcheck="false"></textarea>
+                </div>
+
+                <!-- Live Preview Output Column -->
+                <div class="p-4 bg-slate-50 flex flex-col">
+                    <div class="flex items-center justify-between text-xs text-slate-500 font-mono mb-2">
+                        <span class="flex items-center gap-1.5 font-bold text-slate-700">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> INSTANT PREVIEW
+                        </span>
+                        <span class="text-[11px] text-slate-400">Renders live automatically</span>
+                    </div>
+                    <div class="w-full h-80 lg:h-full bg-white rounded-xl overflow-hidden border border-slate-200 shadow-inner relative flex flex-col">
+                        <iframe id="preview-frame" class="w-full h-full border-none bg-white"></iframe>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Tag Anatomy & Cheatsheet Visualizer -->
+    <section id="cheatsheet" class="py-16 px-4 max-w-7xl mx-auto relative z-10">
+        <div class="text-center mb-12 reveal">
+            <span class="text-xs font-bold font-mono tracking-widest text-brand-purple uppercase mb-2 block">Syntax Anatomy</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">Anatomy of an HTML Tag</h2>
+            <p class="text-slate-500 mt-2 text-sm sm:text-base">Understand how HTML elements are constructed with tags, attributes, and content.</p>
+        </div>
+
+        <!-- Tag Diagram Container -->
+        <div class="bg-white p-6 sm:p-10 rounded-2xl border border-slate-200 shadow-lg reveal mb-10">
+            <div class="flex flex-wrap items-center justify-center gap-2 font-mono text-base sm:text-2xl py-8 px-4 bg-slate-900 rounded-xl">
+                <span class="px-3 py-1.5 bg-rose-500/20 text-rose-400 border border-rose-500/40 rounded-lg font-bold">&lt;button</span>
+                <span class="px-3 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-lg font-bold">class="btn"</span>
+                <span class="px-3 py-1.5 bg-rose-500/20 text-rose-400 border border-rose-500/40 rounded-lg font-bold">&gt;</span>
+                <span class="px-4 py-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-lg font-bold">Click Here</span>
+                <span class="px-3 py-1.5 bg-rose-500/20 text-rose-400 border border-rose-500/40 rounded-lg font-bold">&lt;/button&gt;</span>
+            </div>
+
+            <!-- Descriptive Labels Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 text-center">
+                <div class="p-4 bg-rose-50 rounded-xl border border-rose-100">
+                    <span class="text-xs text-rose-600 font-bold uppercase tracking-wider block mb-1">Opening &amp; Closing Tags</span>
+                    <p class="text-xs text-slate-600 leading-relaxed">Tells the browser where an element starts (<code class="font-mono text-rose-700">&lt;tag&gt;</code>) and ends (<code class="font-mono text-rose-700">&lt;/tag&gt;</code>).</p>
+                </div>
+                <div class="p-4 bg-amber-50 rounded-xl border border-amber-100">
+                    <span class="text-xs text-amber-700 font-bold uppercase tracking-wider block mb-1">Attributes</span>
+                    <p class="text-xs text-slate-600 leading-relaxed">Provides extra properties or configurations (e.g., classes, IDs, link targets).</p>
+                </div>
+                <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
+                    <span class="text-xs text-emerald-700 font-bold uppercase tracking-wider block mb-1">Element Content</span>
+                    <p class="text-xs text-slate-600 leading-relaxed">The inner visible text or nested tags rendered inside the element structure.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Presentation Pitch & Specs Modal -->
+    <div id="presentation-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white rounded-2xl border border-slate-200 max-w-2xl w-full p-6 sm:p-8 shadow-2xl relative transform scale-95 transition-transform duration-300" id="presentation-modal-card">
+            
+            <button onclick="PresentationModule.closeModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 text-lg w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-extrabold text-slate-900">Project Pitch &amp; Defense Specs</h3>
+                    <p class="text-xs text-slate-500 font-mono">Overview for school/competition presentations</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
+                <div class="p-3.5 bg-blue-50/70 border border-blue-100 rounded-xl">
+                    <h4 class="font-bold text-slate-900 text-sm mb-1 text-brand-blue flex items-center gap-1.5">
+                        <i class="fa-solid fa-bullseye"></i> Goal &amp; Target Audience
+                    </h4>
+                    <p>Designed as an engaging, interactive educational web platform that helps beginners master core HTML elements with instant visual feedback, eliminating the setup friction of local editors.</p>
+                </div>
+
+                <div class="p-3.5 bg-purple-50/70 border border-purple-100 rounded-xl">
+                    <h4 class="font-bold text-slate-900 text-sm mb-1 text-brand-purple flex items-center gap-1.5">
+                        <i class="fa-solid fa-code text-brand-purple"></i> Technical Stack &amp; Architecture
+                    </h4>
+                    <ul class="list-disc list-inside space-y-1 text-slate-700">
+                        <li><strong>Structure &amp; Design:</strong> HTML5, Tailwind CSS for clean layout &amp; responsive UI.</li>
+                        <li><strong>Modular JS Engine:</strong> Clean separation of concerns into Editor, UI, Toast, and Particle modules.</li>
+                        <li><strong>Sandbox Engine:</strong> Dynamic iframe document writing for real-time code rendering.</li>
+                        <li><strong>Background Canvas:</strong> Lightweight HTML5 2D Canvas particle animation loop.</li>
+                    </ul>
+                </div>
+
+                <div class="p-3.5 bg-emerald-50/70 border border-emerald-100 rounded-xl">
+                    <h4 class="font-bold text-slate-900 text-sm mb-1 text-emerald-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-star text-emerald-600"></i> Key Features Highlight
+                    </h4>
+                    <p>1-Click template insertion into the live sandbox, responsive live iframe output, tag anatomy visualizer, and toast notifications.</p>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+                <button onclick="PresentationModule.closeModal()" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-sm">
+                    Got it, Back to Project
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 py-8 px-4 bg-white relative z-10">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-brand-blue flex items-center justify-center text-white font-bold text-xs">
+                    &lt;/&gt;
+                </div>
+                <span class="font-bold text-slate-900 text-sm">HTMLForge Studio</span>
+            </div>
+            <p class="text-xs text-slate-500">
+                Educational Project • Built with HTML5, Tailwind CSS, &amp; Vanilla JavaScript.
+            </p>
+            <a href="#hero" class="text-xs font-semibold text-brand-blue hover:text-blue-700 transition-colors">
+                Back to Top <i class="fa-solid fa-arrow-up ml-1"></i>
+            </a>
+        </div>
+    </footer>
+
+    <!-- Clean & Modular JavaScript Architecture -->
+    <script>
+        /**
+         * 1. TOAST NOTIFICATION MODULE
+         * Displays non-intrusive feedback popups (e.g., when copying code or loading templates).
+         */
+        const ToastModule = {
+            show(message, type = 'info') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                
+                const bgColors = {
+                    info: 'bg-slate-900 text-white',
+                    success: 'bg-emerald-600 text-white',
+                    warning: 'bg-amber-600 text-white'
+                };
+
+                toast.className = `pointer-events-auto flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg transform translate-y-2 opacity-0 transition-all duration-300 ${bgColors[type] || bgColors.info}`;
+                toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${message}</span>`;
+                
+                container.appendChild(toast);
+
+                // Animate entrance
+                requestAnimationFrame(() => {
+                    toast.classList.remove('translate-y-2', 'opacity-0');
+                });
+
+                // Auto remove after 2.5 seconds
+                setTimeout(() => {
+                    toast.classList.add('opacity-0', 'translate-y-2');
+                    setTimeout(() => toast.remove(), 300);
+                }, 2500);
+            }
+        };
+
+        /**
+         * 2. LIVE CODE EDITOR MODULE
+         * Manages preset code insertion, real-time iframe preview generation, and clipboard copying.
+         */
+        const EditorModule = {
+            input: null,
+            iframe: null,
+            charCount: null,
+
+            // Preset templates
+            snippets: {
+                headings: `<!-- Heading Examples -->
+<h1 style="color: #2563eb; font-family: sans-serif; font-size: 2rem; margin-bottom: 8px;">Main Heading (H1)</h1>
+<h2 style="color: #334155; font-family: sans-serif; font-size: 1.5rem; margin-bottom: 8px;">Subheading Level 2 (H2)</h2>
+<h3 style="color: #64748b; font-family: sans-serif; font-size: 1.2rem;">Subheading Level 3 (H3)</h3>`,
+
+                paragraph: `<!-- Paragraph & Formatting -->
+<p style="font-family: sans-serif; color: #334155; line-height: 1.6; font-size: 16px;">
+  HTML paragraph elements allow you to write text blocks. You can make text <strong>bold using strong</strong> or <em>italicized using em tags</em>!
+</p>`,
+
+                buttons: `<!-- Interactive Button -->
+<button style="background: #2563eb; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: sans-serif; box-shadow: 0 4px 12px rgba(37,99,235,0.3);" onclick="alert('Hello from HTML!')">
+  Click Me!
+</button>`,
+
+                links: `<!-- Hyperlink -->
+<a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank" style="color: #2563eb; font-weight: bold; font-family: sans-serif; text-decoration: none; border-bottom: 2px solid #2563eb;">
+  Explore MDN Web Documentation &rarr;
+</a>`,
+
+                forms: `<!-- Form Inputs -->
+<form style="font-family: sans-serif; display: flex; flex-direction: column; gap: 12px; max-width: 300px;">
+  <label style="font-size: 14px; font-weight: bold; color: #1e293b;">Your Name:</label>
+  <input type="text" placeholder="e.g. Alex Smith" style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;">
+  
+  <label style="font-size: 14px; font-weight: bold; color: #1e293b;">Choose Skill Level:</label>
+  <select style="padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px;">
+    <option>Beginner</option>
+    <option>Intermediate</option>
+    <option>Expert</option>
+  </select>
+
+  <button type="button" style="background: #0f172a; color: white; padding: 10px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; margin-top: 6px;">Submit</button>
+</form>`,
+
+                card: `<!-- Profile Card Component -->
+<div style="max-width: 300px; margin: 10px auto; font-family: sans-serif; background: #ffffff; border-radius: 16px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; text-align: center;">
+  <div style="width: 64px; height: 64px; background: #2563eb; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; margin: 0 auto 16px auto;">
+    JS
+  </div>
+  <h3 style="margin: 0; color: #0f172a; font-size: 18px;">Alex Smith</h3>
+  <p style="color: #64748b; font-size: 13px; margin: 4px 0 16px 0;">Frontend Web Developer</p>
+  <button style="width: 100%; background: #2563eb; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;" onclick="alert('Connected Profile!')">
+    Follow Developer
+  </button>
+</div>`
+            },
+
+            init() {
+                this.input = document.getElementById('html-input');
+                this.iframe = document.getElementById('preview-frame');
+                this.charCount = document.getElementById('char-count');
+
+                // Attach real-time input listener
+                this.input.addEventListener('input', () => this.updatePreview());
+                
+                // Load default template on start
+                this.loadTemplate('card');
+            },
+
+            updatePreview() {
+                const code = this.input.value;
+                const doc = this.iframe.contentDocument || this.iframe.contentWindow.document;
+                doc.open();
+                doc.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body { 
+                                margin: 16px; 
+                                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+                                color: #1e293b;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${code}
+                    </body>
+                    </html>
+                `);
+                doc.close();
+                this.charCount.textContent = `${code.length} characters`;
+            },
+
+            loadTemplate(key) {
+                if (this.snippets[key]) {
+                    this.input.value = this.snippets[key];
+                    this.updatePreview();
+                    ToastModule.show(`Loaded template snippet!`, 'info');
+                    
+                    // Smooth scroll to studio if clicked from modules
+                    const studio = document.getElementById('playground');
+                    if (window.scrollY < studio.offsetTop - 300) {
+                        studio.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            },
+
+            clear() {
+                this.input.value = '';
+                this.updatePreview();
+                ToastModule.show('Editor cleared', 'warning');
+            },
+
+            copy() {
+                this.input.select();
+                document.execCommand('copy');
+                ToastModule.show('Code copied to clipboard!', 'success');
+            }
+        };
+
+        /**
+         * 3. PRESENTATION PITCH MODAL MODULE
+         * Handles opening/closing the presentation specs modal during project defenses.
+         */
+        const PresentationModule = {
+            modal: null,
+            modalCard: null,
+
+            init() {
+                this.modal = document.getElementById('presentation-modal');
+                this.modalCard = document.getElementById('presentation-modal-card');
+            },
+
+            openModal() {
+                this.modal.classList.remove('opacity-0', 'pointer-events-none');
+                this.modalCard.classList.remove('scale-95');
+                this.modalCard.classList.add('scale-100');
+            },
+
+            closeModal() {
+                this.modal.classList.add('opacity-0', 'pointer-events-none');
+                this.modalCard.classList.remove('scale-100');
+                this.modalCard.classList.add('scale-95');
+            }
+        };
+
+        /**
+         * 4. AMBIENT PARTICLES BACKGROUND MODULE
+         * Animates soft floating background particles using standard HTML5 Canvas 2D API.
+         */
+        const ParticleModule = {
+            canvas: null,
+            ctx: null,
+            particles: [],
+
+            init() {
+                this.canvas = document.getElementById('particle-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.resize();
+                
+                window.addEventListener('resize', () => this.resize());
+                this.animate();
+            },
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                this.createParticles();
+            },
+
+            createParticles() {
+                this.particles = [];
+                const count = Math.floor((this.canvas.width * this.canvas.height) / 20000);
+                for (let i = 0; i < count; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        radius: Math.random() * 2 + 1,
+                        vx: (Math.random() - 0.5) * 0.3,
+                        vy: (Math.random() - 0.5) * 0.3,
+                        alpha: Math.random() * 0.3 + 0.1,
+                        color: Math.random() > 0.5 ? '37, 99, 235' : '124, 58, 237'
+                    });
+                }
+            },
+
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < 0) p.x = this.canvas.width;
+                    if (p.x > this.canvas.width) p.x = 0;
+                    if (p.y < 0) p.y = this.canvas.height;
+                    if (p.y > this.canvas.height) p.y = 0;
+
+                    this.ctx.fillStyle = `rgba(${p.color}, ${p.alpha})`;
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    this.ctx.fill();
+                });
+
+                requestAnimationFrame(() => this.animate());
+            }
+        };
+
+        /**
+         * 5. SCROLL REVEAL OBSERVER
+         */
+        function initScrollReveals() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        // Initialize application on DOM load
+        window.addEventListener('DOMContentLoaded', () => {
+            EditorModule.init();
+            PresentationModule.init();
+            ParticleModule.init();
+            initScrollReveals();
+
+            // Mobile menu toggle logic
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (menuBtn && mobileMenu) {
+                menuBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
