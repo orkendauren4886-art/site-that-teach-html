@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Адаптивный масштаб на телефонах -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML.base — Живой учебник HTML</title>
+    <meta name="description" content="Светлый интерактивный тренажёр HTML: редактор с мгновенным выводом, тест с мемами и основы." />
+    <meta property="og:title" content="HTML.base — Живой учебник HTML" />
+    <meta property="og:description" content="Светлый интерактивный тренажёр HTML: редактор с мгновенным выводом, тест с мемами и основы." />
+    <meta property="og:type" content="website" />
+
+    <!-- Шрифты с поддержкой кириллицы -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Unbounded:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Подключаем единый файл стилей -->
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- 1. ШАПКА -->
+    <header class="header">
+      <div class="container header-inner">
+        <a href="#home" class="logo">&lt;html.base&gt;</a>
+
+        <nav class="nav" aria-label="Меню">
+          <a href="#editor">Редактор</a>
+          <a href="#quiz">Тест</a>
+          <a href="#how">Основы</a>
+          <a href="#memes">Мемы</a>
+        </nav>
+
+        <a href="#quiz" class="nav-cta">Пройти тест</a>
+      </div>
+    </header>
+
+    <main>
+      <!-- 2. ГЛАВНЫЙ ЭКРАН -->
+      <section id="home" class="hero">
+        <div class="container hero-grid">
+          <div class="hero-content">
+            <h1 class="hero-title">
+              Учи HTML руками, а не по конспектам<span class="cursor" aria-hidden="true">_</span>
+            </h1>
+            <p class="hero-text">
+              Меняй теги прямо в окне ниже и сразу смотри результат. А после
+              пройди тест — за каждый верный ответ плавно появится случайный мем.
+            </p>
+            <!-- Простая аккуратная кнопка без тяжёлой тени -->
+            <a href="#editor" class="btn">Открыть редактор</a>
+          </div>
+
+          <aside class="hero-note">
+            <p class="note-num">01 / 04</p>
+            <p class="note-text">
+              Всё в двух файлах: <code>index.html</code> и <code>css/style.css</code>.
+              Просто закиньте в одну папку и откройте.
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <!-- 3. ЖИВОЙ РЕДАКТОР КОДА -->
+      <section id="editor" class="section">
+        <div class="container">
+          <div class="section-head">
+            <span class="section-num">01</span>
+            <h2 class="section-title">Живой редактор кода</h2>
+          </div>
+
+          <div class="toolbar">
+            <div class="tabs">
+              <button type="button" class="tab active" data-preset="hello">Привет, мир</button>
+              <button type="button" class="tab" data-preset="list">Список</button>
+              <button type="button" class="tab" data-preset="card">Карточка</button>
+              <button type="button" class="tab" data-preset="details">Раскрытие</button>
+            </div>
+            <button type="button" id="reset" class="tab">Сбросить</button>
+          </div>
+
+          <div class="sandbox">
+            <div class="pane pane-code">
+              <div class="pane-head">
+                <span>code.html</span>
+                <span>пиши здесь</span>
+              </div>
+              <textarea id="code" class="code-input" spellcheck="false" aria-label="Редактор HTML"></textarea>
+            </div>
+
+            <div class="pane pane-preview">
+              <div class="pane-head">
+                <span>Результат</span>
+                <span>обновляется сразу</span>
+              </div>
+              <iframe id="preview" class="preview-frame" title="Вывод кода" sandbox=""></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. БОЛЬШОЙ ТЕСТ С ПЛАВНЫМ ПОЯВЛЕНИЕМ МЕМА -->
+      <section id="quiz" class="section border-y">
+        <div class="container">
+          <div class="section-head">
+            <span class="section-num">02</span>
+            <h2 class="section-title">Большой тест по HTML</h2>
+          </div>
+
+          <div class="quiz-box">
+            <div class="quiz-top">
+              <span id="quiz-step" class="mono">Вопрос 1 из 6</span>
+              <span id="quiz-score" class="mono">Верно: 0</span>
+            </div>
+
+            <h3 id="quiz-question" class="quiz-question"></h3>
+
+            <!-- Варианты ответа -->
+            <div id="quiz-options" class="quiz-options"></div>
+
+            <!-- Сообщение при ошибке -->
+            <p id="quiz-status" class="quiz-status" aria-live="polite"></p>
+
+            <!-- Большой блок мема: плавно появляется и плавно исчезает -->
+            <div id="quiz-meme" class="quiz-meme" aria-live="polite">
+              <img id="quiz-meme-img" src="" alt="Случайный мем за правильный ответ" referrerpolicy="no-referrer" />
+              <div class="quiz-meme-body">
+                <p class="quiz-meme-badge">Верно! Держи мем</p>
+                <p id="quiz-meme-text" class="quiz-meme-text"></p>
+              </div>
+            </div>
+
+            <button type="button" id="quiz-restart" class="btn" hidden>Пройти ещё раз</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. ОСНОВЫ -->
+      <section id="how" class="section">
+        <div class="container how-grid">
+          <div class="how-lead">
+            <div class="section-head">
+              <span class="section-num">03</span>
+              <h2 class="section-title">База за 15 минут</h2>
+            </div>
+            <p class="big-stat">6 тегов</p>
+            <p class="muted">
+              Хватает, чтобы собрать свою первую понятную страницу без единого
+              фреймворка.
+            </p>
+          </div>
+
+          <ol class="line-list">
+            <li>
+              <h3><code>&lt;h1&gt;</code> и <code>&lt;p&gt;</code></h3>
+              <p>Главный заголовок страницы и обычные абзацы текста.</p>
+            </li>
+            <li>
+              <h3><code>&lt;a href="..."&gt;</code></h3>
+              <p>Ссылка на внешний сайт или плавный скролл к разделу по <code>#id</code>.</p>
+            </li>
+            <li>
+              <h3><code>&lt;ul&gt;</code>, <code>&lt;li&gt;</code> и <code>&lt;details&gt;</code></h3>
+              <p>Аккуратные списки и раскрывающиеся ответы без JavaScript.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- 6. РАЗДЕЛ «МЕМЫ» -->
+      <section id="memes" class="section border-y">
+        <div class="container">
+          <div class="section-head">
+            <span class="section-num">04</span>
+            <h2 class="section-title">Мемы</h2>
+          </div>
+
+          <article class="meme-featured">
+            <div class="meme-media">
+              <img
+                src="https://i.imgflip.com/23ls.jpg"
+                alt="Мем: девочка на фоне пожара — когда забыл закрыть один div"
+                referrerpolicy="no-referrer"
+              />
+            </div>
+            <div class="meme-info">
+              <h3 class="meme-title">Забыл закрыть один &lt;/div&gt;</h3>
+              <p class="muted">
+                Спокойно смотришь, как вся страница уехала вправо, а подвал
+                оказался внутри первой карточки.
+              </p>
+            </div>
+          </article>
+
+          <div class="meme-row">
+            <article class="meme-item">
+              <div class="meme-media">
+                <img
+                  src="https://i.imgflip.com/1ur9b0.jpg"
+                  alt="Мем: парень оборачивается — чистый HTML vs 20 эффектов"
+                  referrerpolicy="no-referrer"
+                />
+              </div>
+              <h3 class="meme-title">Чистая база vs 20 эффектов</h3>
+              <p class="muted">
+                Обещал сначала выучить структуру, но сразу полез крутить анимации.
+              </p>
+            </article>
+
+            <article class="meme-item">
+              <div class="meme-media">
+                <img
+                  src="https://i.imgflip.com/1bij.jpg"
+                  alt="Мем: нельзя просто так взять и выучить всё за вечер"
+                  referrerpolicy="no-referrer"
+                />
+              </div>
+              <h3 class="meme-title">Нельзя просто так запомнить всё</h3>
+              <p class="muted">
+                Поэтому сверху всегда под рукой живой редактор для быстрой проверки.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 7. ПОДВАЛ -->
+    <footer class="footer">
+      <div class="container footer-inner">
+        <p>&lt;html.base&gt; · Обучение HTML</p>
+        <a href="#home">Наверх ↑</a>
+      </div>
+    </footer>
+
+    <!-- Простой скрипт: редактор + большой тест с плавным мемом -->
+    <script>
+      // === 1. ЖИВОЙ РЕДАКТОР ===
+      const presets = {
+        hello: `<h1>Привет, веб!</h1>\n<p>Поменяй текст или тег <strong>strong</strong>.</p>\n\n<style>\n  h1 { color: #e63b1f; margin-bottom: 8px; }\n  p { color: #4f4e56; }\n</style>`,
+        list: `<h2>План на вечер</h2>\n<ul>\n  <li>Открыть редактор</li>\n  <li>Написать 3 тега</li>\n  <li>Пройти тест ниже</li>\n</ul>`,
+        card: `<article class="box">\n  <h3>Моя карточка</h3>\n  <p>Поменяй цвет рамки в CSS ниже.</p>\n</article>\n\n<style>\n  .box { padding: 18px; border: 2px solid #16161a; border-radius: 6px; }\n</style>`,
+        details: `<details open>\n  <summary>Нажми на меня</summary>\n  <p>Раскрывающийся блок без JavaScript.</p>\n</details>`
+      };
+
+      const code = document.getElementById('code');
+      const preview = document.getElementById('preview');
+      const tabButtons = document.querySelectorAll('[data-preset]');
+      let currentPreset = 'hello';
+
+      function updatePreview() {
+        preview.srcdoc =
+          '<style>body{margin:0;padding:22px;background:#ffffff;color:#16161a;font-family:sans-serif;line-height:1.6}</style>' +
+          code.value;
+      }
+
+      function loadPreset(name) {
+        currentPreset = name;
+        code.value = presets[name];
+        tabButtons.forEach(b => b.classList.toggle('active', b.dataset.preset === name));
+        updatePreview();
+      }
+
+      tabButtons.forEach(b => b.addEventListener('click', () => loadPreset(b.dataset.preset)));
+      document.getElementById('reset').addEventListener('click', () => loadPreset(currentPreset));
+      code.addEventListener('input', updatePreview);
+      loadPreset('hello');
+
+      // === 2. ТЕСТ С ПЛАВНЫМ ПОЯВЛЕНИЕМ И ИСЧЕЗНОВЕНИЕМ МЕМА ===
+      const questions = [
+        { q: 'Какой тег задаёт главный заголовок страницы?', options: ['<h1>', '<head>', '<title>'], answer: 0 },
+        { q: 'Какой атрибут задаёт адрес ссылки в <a>?', options: ['src', 'href', 'alt'], answer: 1 },
+        { q: 'Какой тег создаёт раскрывающийся блок без JS?', options: ['<section>', '<details>', '<aside>'], answer: 1 },
+        { q: 'Каким тегом подключают файл style.css?', options: ['<link>', '<style>', '<script>'], answer: 0 },
+        { q: 'Какой тег нужен для маркированного списка?', options: ['<ol>', '<ul>', '<dl>'], answer: 1 },
+        { q: 'Какой атрибут обязателен у картинки <img> для описания?', options: ['title', 'name', 'alt'], answer: 2 }
+      ];
+
+      const memePool = [
+        { img: 'https://i.imgflip.com/23ls.jpg', text: 'Когда забыл </div>, но сделал вид, что так и задумано.' },
+        { img: 'https://i.imgflip.com/1ur9b0.jpg', text: 'Ты и CSS-анимации вместо скучной таблицы.' },
+        { img: 'https://i.imgflip.com/1bij.jpg', text: 'Нельзя просто так взять и не перепутать <head> с <header>.' },
+        { img: 'https://i.imgflip.com/24y43o.jpg', text: 'HTML без JS тоже умеет удивлять. Переубеди меня.' },
+        { img: 'https://i.imgflip.com/28j0te.jpg', text: 'HTML и CSS, когда все теги закрыты ровно.' },
+        { img: 'https://i.imgflip.com/26jxvz.jpg', text: 'Написал 5 строк. Работает! Удалил пробел. Всё сломалось.' }
+      ];
+
+      let index = 0;
+      let score = 0;
+      let lastMeme = -1;
+      let locked = false;
+
+      const stepEl = document.getElementById('quiz-step');
+      const scoreEl = document.getElementById('quiz-score');
+      const questionEl = document.getElementById('quiz-question');
+      const optionsEl = document.getElementById('quiz-options');
+      const statusEl = document.getElementById('quiz-status');
+      const memeBox = document.getElementById('quiz-meme');
+      const memeImg = document.getElementById('quiz-meme-img');
+      const memeText = document.getElementById('quiz-meme-text');
+      const restartBtn = document.getElementById('quiz-restart');
+
+      // Случайный мем без повтора подряд
+      function pickRandomMeme() {
+        let next = Math.floor(Math.random() * memePool.length);
+        if (next === lastMeme) next = (next + 1) % memePool.length;
+        lastMeme = next;
+        return memePool[next];
+      }
+
+      // Отрисовка вопроса
+      function renderQuestion() {
+        locked = false;
+        statusEl.textContent = '';
+        memeBox.classList.remove('show');
+
+        if (index >= questions.length) {
+          stepEl.textContent = 'Готово';
+          questionEl.textContent = `Тест пройден: ${score} из ${questions.length}`;
+          optionsEl.innerHTML = '';
+          restartBtn.hidden = false;
+          return;
+        }
+
+        const item = questions[index];
+        stepEl.textContent = `Вопрос ${index + 1} из ${questions.length}`;
+        scoreEl.textContent = `Верно: ${score}`;
+        questionEl.textContent = item.q;
+        restartBtn.hidden = true;
+        optionsEl.innerHTML = '';
+
+        item.options.forEach((label, i) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'quiz-opt';
+          btn.textContent = label;
+          btn.addEventListener('click', () => handleAnswer(i, btn));
+          optionsEl.appendChild(btn);
+        });
+      }
+
+      // Проверка ответа + плавный показ и плавное скрытие мема
+      function handleAnswer(choice, btn) {
+        if (locked) return;
+        const item = questions[index];
+
+        if (choice === item.answer) {
+          locked = true;
+          score++;
+          scoreEl.textContent = `Верно: ${score}`;
+          btn.classList.add('correct');
+          statusEl.textContent = '';
+
+          const meme = pickRandomMeme();
+          memeImg.src = meme.img;
+          memeText.textContent = meme.text;
+
+          // Плавно показываем мем
+          memeBox.classList.add('show');
+
+          // Через 2.2 секунды плавно убираем мем
+          setTimeout(() => {
+            memeBox.classList.remove('show');
+          }, 2200);
+
+          // После окончания анимации скрытия переходим к следующему вопросу
+          setTimeout(() => {
+            index++;
+            renderQuestion();
+          }, 2650);
+        } else {
+          btn.classList.add('wrong');
+          statusEl.textContent = 'Неверно — попробуй другой вариант.';
+        }
+      }
+
+      restartBtn.addEventListener('click', () => {
+        index = 0;
+        score = 0;
+        renderQuestion();
+      });
+
+      renderQuestion();
+    </script>
+  </body>
+</html>
